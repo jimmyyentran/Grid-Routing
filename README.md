@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Routing Project Framework
 ===============
 
@@ -43,3 +44,8 @@ For your submission, you must have a repository updated with the code you wish t
 
 In addition, the master branch of your repository **must** always be compilable. If you are working on a new feature that will cause your code to no longer compile, those updates should be put in a branch and merged to the master when completed, tested, and stable.
 
+=======
+# Grid-Routing
+
+Implementation of Lee's Algorithm and Hadlock's Algorithm using the base project source code provided in: https://github.com/brrcrites/Routing_Framework 
+>>>>>>> 0735dc1d37d7761e544a2e95b16fcc82072eb291
