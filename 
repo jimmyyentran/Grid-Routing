@@ -1,0 +1,131 @@
+[33mcommit 2a9c0e4a85378a7803127c08045968210696d2b9[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Wed Feb 25 11:27:10 2015 -0800
+
+    Updated the style guidelines
+
+[33mcommit 392cde03617576717ce47353396470d83d96a9c0[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Tue Feb 24 15:47:21 2015 -0800
+
+    Updated README
+
+[33mcommit 294d4128a0dd0a3ad5bb018d6475e25e2b19e4d2[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Tue Feb 24 15:30:11 2015 -0800
+
+    Updated README to be non-220 specific
+
+[33mcommit dbf7fe54165cbd5426e12687ca9474a30d3f3836[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Wed Dec 10 12:04:12 2014 -0800
+
+    Fixed error in test_sample.json
+    
+    Because some people saw the errors, but most people didn't
+
+[33mcommit ec9e1da737d2f1dcf503114b976a6d8ab83c74e6[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Tue Nov 25 18:26:40 2014 -0800
+
+    Updated README to clarify use of child classes
+
+[33mcommit 33290ab59c80173733afe9baf59402493d9c880a[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Mon Nov 24 17:47:38 2014 -0800
+
+    updated README to clarify indexing of ProblemObject
+
+[33mcommit fef2a7707a850efc764988de2c63f195f6cae648[m
+Merge: 45d38ba 4fbcbab
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Nov 21 17:57:54 2014 -0800
+
+    Merge remote-tracking branch 'origin/master'
+    
+    Conflicts:
+    	Source/main.cc
+
+[33mcommit 45d38bab1cf458e6e50b432f191d53fa1c9d4e18[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Nov 21 17:54:52 2014 -0800
+
+    Updated grid and main to better reflect the desired classes and main for submission
+
+[33mcommit 4fbcbaba9cce6726501d8bc07c45f36abbf829ce[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Tue Nov 18 18:43:45 2014 -0800
+
+    Updated segment group and path segment to have print functions, updated main example to call these new functions
+
+[33mcommit 2df1320a05b6f835ffd2028549fd0f9688560205[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Sun Nov 16 18:22:44 2014 -0800
+
+    Updated main so it would fail gracefully without enough arguments
+
+[33mcommit 96ca28bb8fe757c008271cc5edfa0ee6ddeb7b80[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Sat Nov 15 21:54:30 2014 -0800
+
+    Updated Makefile to propagate changes to the executable name
+
+[33mcommit 2c3d3687aac8e1c8c30b7d3a57d58e48fe1abb81[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Nov 14 17:12:02 2014 -0800
+
+    added .gitignore so peoples repos aren't overflowing with .o files.
+
+[33mcommit 3688d9ca2b29d32abd679681d9a3f59ba5d268a8[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Nov 14 16:39:37 2014 -0800
+
+    Made tiny changes to the README that no one but me will notice
+
+[33mcommit d73c1dbdc37b851332e7d0e9d72b168cc4ce76b0[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Nov 14 16:38:50 2014 -0800
+
+    Updated README for link to adding collaborators
+
+[33mcommit 3dba42c6d850dfe89f2f2b11fd676a406d392f63[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Nov 14 16:37:02 2014 -0800
+
+    Made minor fixes to markdown on README
+
+[33mcommit 9b2b2c58e78d9e2c975c560162753120a3b0976e[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Nov 14 16:33:19 2014 -0800
+
+    Added JSON Parser, Problem Object, and updated main and README to reflect this change
+
+[33mcommit 08c8cb127ab173035be6e2ae9f0c7cd3186f7640[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Wed Nov 12 15:08:00 2014 -0800
+
+    removed errant files from framework
+
+[33mcommit 71b533c7eeb894f15671338a221b428cab880fae[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Oct 31 12:55:57 2014 -0700
+
+    Added the style guide to the framework
+
+[33mcommit e96c4a2eefc5f827134f4f2f74ca98cd1715b8f8[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Fri Oct 31 00:35:29 2014 -0700
+
+    Updated README to reflect missing code standards file
+
+[33mcommit f9df82fa7e82b05e660010a62444834baee75b7a[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Wed Oct 29 17:14:24 2014 -0700
+
+    Initial Commit
+
+[33mcommit e004f5ae6d4cf59e9f18d80b0d8eb680552a850a[m
+Author: Brian Crites <brrcrites@gmail.com>
+Date:   Wed Oct 29 16:03:10 2014 -0700
+
+    Initial commit
