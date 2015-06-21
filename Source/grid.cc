@@ -1,7 +1,7 @@
 #include "../Headers/grid.h"
 #include "../Headers/edge.h"
 #include "../Headers/claim.h"
-#include <iostream>
+#include <iostream>     // used for testing
 
 //Takes an x and y coordinate as input and creates a grid of that size filled with default nodes
 Utilities::Grid::Grid(ProblemObject* problem_object) {
@@ -12,8 +12,6 @@ Utilities::Grid::Grid(ProblemObject* problem_object) {
 		  vector<Node*> temp_row;
 	      for(int x = 0; x < width; x++) {
 			  Node* new_node = new Node(x,y);
-			 std::cout << "test" << temp_row.size();
-
 			  if (x > 0) {
 				  Edge* west = new Edge(new_node,temp_row.at(temp_row.size()-1));
 				  new_node->add_connection(west);
@@ -26,6 +24,7 @@ Utilities::Grid::Grid(ProblemObject* problem_object) {
           }
           this->grid.push_back(temp_row);
       }
+      
 }
 
 //Destructs the grid by deleting each node individually, the node destructors will delete their own set of edges

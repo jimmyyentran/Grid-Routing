@@ -1,5 +1,6 @@
 
 #include "../Headers/grid.h"
+#include "../Headers/gridfull.h"
 #include "../Headers/problem_object.h"
 #include <time.h>
 #include <cstdlib>
@@ -20,7 +21,7 @@ int main(int argc,char* argv[]) {
 	// EDIT FROM HERE DOWN
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
-	Utilities::Grid g(first_problem);
+	Utilities::GridFull g(first_problem);
 
 	/*
 	Note: we do not take into account the connections or blockers that exist in the Project Object

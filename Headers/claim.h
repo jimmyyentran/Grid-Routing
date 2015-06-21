@@ -2,7 +2,7 @@
             ===== A Short Summary of the Claims System =====
 
 In this system, claims are used for printing debug and note information.
-This is done so that we can esily turn this information on and off throughout
+This is done so that we can easily turn this information on and off throughout
 the entire code base without having to manually comment outputs or look
 through multiple files.
 

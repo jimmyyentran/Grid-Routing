@@ -22,7 +22,7 @@ Utilities::ProblemObject::ProblemObject(string filename) {
 
 	//First we extract the name, which requires looking for the name tag
 	JsonValue* problem_name = file_object->find("name");
-	//First we check that we got a return from teh call to find("name")
+	//First we check that we got a return from the call to find("name")
 	if(problem_name) {
 		//If we did get a return, then we want to check that what we got was a string
 		if(problem_name->is_string()) {
@@ -42,7 +42,7 @@ Utilities::ProblemObject::ProblemObject(string filename) {
 	Now we want to get the list of blockers (squares in the grid that are invalid for routing), however since
 	there are many of these in one problem, we represent them in the JSON object as an array
 	*/
-	JsonValue* list = file_object->find("blockerList");
+	JsonValue* list = file_object->find("blockerList"); 
 	//We have to make sure that this list is an array, otherwise we have a malformed JSON object
 	if(list && list->is_array()) {
 		JsonArray* array = list->get_array();
