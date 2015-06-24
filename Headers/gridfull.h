@@ -1,40 +1,40 @@
 #ifndef _GRID_FULL_H_
 #define _GRID_FULL_H_
 
-#include "node.h"
+#include "nodefull.h"
 #include "path.h"
 #include "problem_object.h"
-#include "grid.h"
 #include <vector>
-#include <map>
-#include <set>
+#include <queue>
+#include <utility>
 
 namespace Utilities {
-    class GridFull : public Grid {
+    class GridFull{
         private:
-            std::map<Node*, int> grid_nodes;
-            /*
-                NODE-TYPE CONSTANTS:
-                kBlock = -1
-                kVistited = -2
-                kBorder = -3
-                kFree = -4
-                
-                All sinks and sources are non-negatives. 
-                Sources are even
-                Sinks are odds and sources + 1
-                
-                Ex. Source1 = 0, Sink1 = 1. Source2 = 2, Sink2 = 3
-            */
-            vector<Node* > border;
+            vector<vector<NodeFull*> > grid;   
+            std::queue<std::pair<NodeFull*, NodeFull*> > connections;
+            std::queue<NodeFull*> border;
             
         public:
             // Constructor
             GridFull(ProblemObject* problem_object);
             
+            // Accessors
+            int get_width();
+            int get_height();
+            
             // object checker
-            void include_connections(ProblemObject* problem_object);
+            void check_connections(ProblemObject* problem_object);
             void include_blockers(ProblemObject* problem_object);
+            
+            // algorithm
+            void run_lee(int sink);
+            NodeFull* load_connection();
+            bool increment_path(NodeFull*, int);
+            bool search_north(NodeFull*);
+            bool search_west(NodeFull*);
+            bool search_south(NodeFull*);
+            bool search_east(NodeFull*);
             
             // testers
             void print_grid();

@@ -1,5 +1,5 @@
-#ifndef _GRID_FULL_H_
-#define _GRID_FULL_H_
+#ifndef _GRID_FULL_OLD_H_
+#define _GRID_FULL_OLD_H_
 
 #include "node.h"
 #include "path.h"

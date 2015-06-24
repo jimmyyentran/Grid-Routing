@@ -22,6 +22,9 @@ int main(int argc,char* argv[]) {
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
 	Utilities::GridFull g(first_problem);
+	g.print_grid();
+	g.run_lee(1);
+	g.print_grid();
 
 	/*
 	Note: we do not take into account the connections or blockers that exist in the Project Object
@@ -37,19 +40,19 @@ int main(int argc,char* argv[]) {
 	Path: a series of straight line segments, with a single source and a single sink
 	Netlist: a series of stright line segments, with a single source and more than one sink
 	*/
-	vector<Path*> paths = g.test_algorithm();
+	// vector<Path*> paths = g.test_algorithm();
 
 	//Print the paths/netlists that you return from your algorithm
-	for(unsigned i = 0; i < paths.size(); i++) {
-		cout << "Path " << i << ": ";
-		paths.at(i)->print();
-		Path* temp = paths.at(i);
-		delete temp;
-	}
+	// for(unsigned i = 0; i < paths.size(); i++) {
+	// 	cout << "Path " << i << ": ";
+	// 	paths.at(i)->print();
+	// 	Path* temp = paths.at(i);
+	// 	delete temp;
+	// }
 
-	paths.clear();
+	// paths.clear();
 
-	delete first_problem;
+	// delete first_problem;
 
 	return 0;
 }
