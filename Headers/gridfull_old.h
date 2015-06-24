@@ -12,21 +12,11 @@
 namespace Utilities {
     class GridFull : public Grid {
         private:
-            std::map<Node*, int> grid_nodes;
-            /*
-                NODE-TYPE CONSTANTS:
-                kBlock = -1
-                kVistited = -2
-                kBorder = -3
-                kFree = -4
-                
-                All sinks and sources are non-negatives. 
-                Sources are even
-                Sinks are odds and sources + 1
-                
-                Ex. Source1 = 0, Sink1 = 1. Source2 = 2, Sink2 = 3
-            */
-            vector<Node* > border;
+            enum Status{kBlock, kSink, kVisited, KBorder};
+            std::set<Node*> blocked_nodes; //set for quicker lookup-time & unique elements
+            vector<Node* > source;
+            vector<Node* > sink;
+            std::map<Node*, Status> grid_nodes;
             
         public:
             // Constructor
@@ -38,6 +28,12 @@ namespace Utilities {
             
             // testers
             void print_grid();
+            // void check_object_validity(ProblemObject* problem_object);
+            
+            // additional grid implementations
+            // void include_blockers(ProblemObject* problem_object);
+            // void include_connections(ProblemObject* problem_object);
+            
     };
 }
 
