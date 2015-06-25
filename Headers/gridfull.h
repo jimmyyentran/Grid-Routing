@@ -6,7 +6,7 @@
 #include "problem_object.h"
 #include <vector>
 #include <queue>
-#include <utility>
+// #include <utility>
 
 namespace Utilities {
     class GridFull{
@@ -14,6 +14,9 @@ namespace Utilities {
             vector<vector<NodeFull*> > grid;   
             std::queue<std::pair<NodeFull*, NodeFull*> > connections;
             std::queue<NodeFull*> border;
+            
+            enum Direction {kNorth, kEast, kSouth, kWest, kDirectionSink};
+            std::vector<std::pair<NodeFull*, Direction> > trace_path;
             
         public:
             // Constructor
@@ -31,6 +34,7 @@ namespace Utilities {
             void run_lee(int sink);
             NodeFull* load_connection();
             bool increment_path(NodeFull*, int);
+            void insert_node_path(NodeFull*, Direction);
             bool search_north(NodeFull*);
             bool search_west(NodeFull*);
             bool search_south(NodeFull*);

@@ -173,7 +173,6 @@ void Utilities::GridFull::print_grid(){
                 std::cout << '~';
             }
             else if(current_node->get_status() >= 0){
-                // assign a number to the source
                 std::cout << current_node->get_status();
             }
             else if(current_node->get_status() == kVisited){
@@ -189,8 +188,8 @@ void Utilities::GridFull::print_grid(){
 
 void Utilities::GridFull::run_lee(int sink_num){
     // input the first node (source) into queue
-    NodeFull* sink_node = load_connection();
-    border.push(sink_node);
+    NodeFull* source_node = load_connection();
+    border.push(source_node);
     
     bool path_found = false;
     while(!border.empty()){
@@ -211,8 +210,28 @@ void Utilities::GridFull::run_lee(int sink_num){
         // TEST
         // print_grid();
     }
+    // reset source to the source node
+    source_node->set_status(kSource);
     
-    sink_node->set_status(kSource);
+    // Re-Trace path
+    if(!path_found){
+        claim("No path found", kWarning);
+        return;
+    }
+    
+    // pop off connection
+}
+
+// void Utilities::GridFull::backtrack(){
+//     Direction direction = trace_path.begin()->second;
+//     if(direction == kNorth){
+//         //TODO
+        
+//     }
+// }
+
+void Utilities::GridFull::insert_node_path(NodeFull* node, Direction direction){
+    trace_path.insert(trace_path.begin(), std::pair<NodeFull*, Direction>(node, direction));
 }
 
 bool Utilities::GridFull::search_north(NodeFull* border_node){
@@ -221,7 +240,10 @@ bool Utilities::GridFull::search_north(NodeFull* border_node){
     int cost = border_node->get_cost() + 1;
     if(north_y< get_height()){
         // node is in grid range
-        return increment_path(grid.at(north_y).at(north_x),cost); 
+        if(increment_path(grid.at(north_y).at(north_x),cost)){
+            insert_node_path(border_node, kNorth);
+            return true;
+        }
     }
     return false;
 }
@@ -232,7 +254,10 @@ bool Utilities::GridFull::search_west(NodeFull* border_node){
     int cost = border_node->get_cost() + 1;
     if(west_x >= 0){
         // Western node is within grid limits
-        return increment_path(grid.at(west_y).at(west_x),cost);
+        if(increment_path(grid.at(west_y).at(west_x),cost)){
+            insert_node_path(border_node, kWest);
+            return true;
+        }
     }
     return false;
 }
@@ -243,7 +268,10 @@ bool Utilities::GridFull::search_south(NodeFull* border_node){
     int cost = border_node->get_cost() + 1;
     if(south_y >= 0){
         // Southern node is within grid limits
-        return increment_path(grid.at(south_y).at(south_x),cost);
+        if(increment_path(grid.at(south_y).at(south_x),cost)){
+           insert_node_path(border_node, kSouth);
+            return true;
+        }
     }
     return false;
 }
@@ -254,15 +282,17 @@ bool Utilities::GridFull::search_east(NodeFull* border_node){
     int cost = border_node->get_cost() + 1;
     if(east_x < get_width()){
         // Eastern node is within grid limits
-        return increment_path(grid.at(east_y).at(east_x),cost);
+        if(increment_path(grid.at(east_y).at(east_x),cost)){
+            insert_node_path(border_node, kEast);
+            return true;
+        };
     }
     return false;
 }
 
 bool Utilities::GridFull::increment_path(NodeFull* new_border_node, int cost){
     if(new_border_node->get_status() == kSink){
-        
-        claim("Found Path!", kNote);
+        trace_path.push_back(std::pair<NodeFull*, Direction>(new_border_node, kDirectionSink));
         return true;
     }
     if(new_border_node->get_status() >= kFree){
