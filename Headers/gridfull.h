@@ -6,6 +6,7 @@
 #include "problem_object.h"
 #include <vector>
 #include <queue>
+#include <stack>
 // #include <utility>
 
 namespace Utilities {
@@ -14,9 +15,8 @@ namespace Utilities {
             vector<vector<NodeFull*> > grid;   
             std::queue<std::pair<NodeFull*, NodeFull*> > connections;
             std::queue<NodeFull*> border;
-            
-            enum Direction {kNorth, kEast, kSouth, kWest, kDirectionSink};
-            std::vector<std::pair<NodeFull*, Direction> > trace_path;
+            std::stack<NodeFull*> trace_path;
+            vector<Path*> paths;
             
         public:
             // Constructor
@@ -31,10 +31,18 @@ namespace Utilities {
             void include_blockers(ProblemObject* problem_object);
             
             // algorithm
-            void run_lee(int sink);
+            vector<Path*> run_lee();
+            void run_lee_step();
             NodeFull* load_connection();
             bool increment_path(NodeFull*, int);
-            void insert_node_path(NodeFull*, Direction);
+            void convert_to_path();
+            void backtrack();
+            void clean_up_grid();
+            
+            bool backtrack_north();
+            bool backtrack_south();
+            bool backtrack_west();
+            bool backtrack_east();
             bool search_north(NodeFull*);
             bool search_west(NodeFull*);
             bool search_south(NodeFull*);
@@ -42,6 +50,7 @@ namespace Utilities {
             
             // testers
             void print_grid();
+            void print_path();
     };
 }
 

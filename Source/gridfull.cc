@@ -4,26 +4,24 @@
 #include <iostream> // testing
 #include <time.h> // sleep for testing
 
-/*  
-    UPDATE:
-    Used vectors
-*/
-
 /*
     NODE-TYPE CONSTANTS:
-    kSink = 1
-    kSource = 0
-    kFree = -1
-    kBlock = -2
-    kVistited = -3
-    kBorder = -4
+    const int kSink = 1;
+    const int kSource = 0;
+    const int kFree = -1;
+    const int kBorder = -2;
+    const int kVisited = -3;
+    const int kBlock = -4;
+    const int kPath = -5;
 */
+
 const int kSink = 1;
 const int kSource = 0;
 const int kFree = -1;
-const int kBlock = -2;
+const int kBorder = -2;
 const int kVisited = -3;
-const int kBorder = -4;
+const int kBlock = -4;
+const int kPath = -5;
 
 // inherit constructor from Grid class
 Utilities::GridFull::GridFull(ProblemObject* problem_object){
@@ -143,8 +141,14 @@ void Utilities::GridFull::check_connections(ProblemObject* problem_object){
             claim("Connection " + name + " source is in a blocker", kError);
             return;
         }
-        if(current_source->get_status() == kBlock){
+        if(current_sink->get_status() == kBlock){
             claim("Connection " + name + " sink is in a blocker", kError);
+            return;
+        }
+        
+        //Make sure sinks and sources aren't the same
+        if(source_y == sink_y && source_x == sink_x){
+            claim("Connection " + name + " source and sink are the same coordinates", kError);
             return;
         }
         
@@ -154,8 +158,14 @@ void Utilities::GridFull::check_connections(ProblemObject* problem_object){
 }
 
 Utilities::NodeFull* Utilities::GridFull::load_connection(){
+    if(connections.empty()){
+        claim("Empty connection vector", kError);
+        return 0;
+    }
     connections.front().first->set_status(kSource);
+    connections.front().first->set_cost(0);
     connections.front().second->set_status(kSink);
+    connections.front().second->set_cost(0);
     return connections.front().first;
 }
 
@@ -163,40 +173,55 @@ void Utilities::GridFull::print_grid(){
     int width = get_width();    // decrease call cost
     for(int y = get_height() - 1; y >= 0; --y){
         for(int x = 0; x < width - 1; ++x){
-            NodeFull* current_node = grid.at(y).at(x);
-            if(current_node->get_status() == kFree){
-                // the current_node is free/empty;
-                std::cout << '.';
-            }
-            else if(current_node->get_status() == kBlock){
-                // the current_node is a block
-                std::cout << '~';
-            }
-            else if(current_node->get_status() >= 0){
-                std::cout << current_node->get_status();
-            }
-            else if(current_node->get_status() == kVisited){
-                std::cout << current_node->get_cost() % 10;
-            }
-            else if(current_node->get_status() == kBorder){
-                std::cout << 'B';
+            int status = grid.at(y).at(x)->get_status();
+            switch(status){
+                case kFree:
+                    // the current_node is free/empty;
+                    std::cout << ' ';
+                    break;
+                case kBlock:
+                    // the current_node is a block
+                    std::cout << '~';
+                    break;
+                case kSource:
+                    std::cout << 'O';
+                    break;
+                case kSink:
+                    std::cout << 'X';
+                    break;
+                case kVisited:
+                    std::cout << grid.at(y).at(x)->get_cost() % 10;
+                    break;
+                case kBorder:
+                    std::cout << 'B';
+                    break;
+                case kPath:
+                    std::cout << '*';
+                    break;
             }
         }
         std::cout << endl;
     }
 }
 
-void Utilities::GridFull::run_lee(int sink_num){
+vector<Utilities::Path*> Utilities::GridFull::run_lee(){
+    // while(!connections.empty()){
+        run_lee_step();
+        run_lee_step();
+    // }
+    return paths;
+}
+
+void Utilities::GridFull::run_lee_step(){
     // input the first node (source) into queue
     NodeFull* source_node = load_connection();
+    if(source_node == 0){
+        return;
+    }
     border.push(source_node);
     
     bool path_found = false;
     while(!border.empty()){
-        
-        // TEST
-        // testCode();
-        
         NodeFull* front = border.front();
         // start searching
         if(search_north(front) || search_east(front) || search_south(front)
@@ -206,10 +231,8 @@ void Utilities::GridFull::run_lee(int sink_num){
         }
         border.front()->set_status(kVisited);
         border.pop();
-        
-        // TEST
-        // print_grid();
     }
+    
     // reset source to the source node
     source_node->set_status(kSource);
     
@@ -219,29 +242,158 @@ void Utilities::GridFull::run_lee(int sink_num){
         return;
     }
     
-    // pop off connection
+    backtrack();
+    
+    //TEST
+    print_grid();
+    
+    // convert source and sink into paths
+    source_node->set_status(kPath);
+    connections.front().second->set_status(kPath);
+    
+    // make stack into vector of paths
+    convert_to_path();
+    
+    // all border and visited nodes cleared status and sinks
+    clean_up_grid();
+    
+    while(!border.empty()){
+        border.pop();
+    }
+    
+    // pop the finished connection
+    connections.pop();
 }
 
-// void Utilities::GridFull::backtrack(){
-//     Direction direction = trace_path.begin()->second;
-//     if(direction == kNorth){
-//         //TODO
-        
-//     }
+void Utilities::GridFull::clean_up_grid(){
+    int width = get_width();    // decrease call cost
+    for(int y = get_height() - 1; y >= 0; --y){
+        for(int x = 0; x < width - 1; ++x){
+            NodeFull* current_node = grid.at(y).at(x);
+            int status = current_node->get_status();
+            if(status == kBorder || status == kVisited){
+                current_node->set_status(kFree);
+                current_node->set_cost(0);
+            }
+        }
+    }
+}
+
+void Utilities::GridFull::convert_to_path(){
+    Path* new_path = new Path();
+    while(!trace_path.empty()){
+        int x = trace_path.top()->get_x();
+        int y = trace_path.top()->get_y();
+        Point head(x, y);
+        trace_path.pop();
+        if(trace_path.empty()){
+            break;
+        }
+        x = trace_path.top()->get_x();
+        y = trace_path.top()->get_y();
+        Point tail(x, y);
+        PathSegment* new_segment = new PathSegment(head, tail);
+        new_path->add_segment(new_segment);
+    }
+    paths.push_back(new_path);
+}
+
+void Utilities::GridFull::print_path(){
+	for(unsigned i = 0; i < paths.size(); i++) {
+    	std::cout << "Path " << i << ": ";
+    	paths.at(i)->print();
+    }
+}
+
+void Utilities::GridFull::backtrack(){
+    while(trace_path.top()->get_status() != kSource){
+        backtrack_north();
+        backtrack_east();
+        backtrack_south();
+        backtrack_west();
+    }
+}
+
+bool Utilities::GridFull::backtrack_north(){
+    int current_y = trace_path.top()->get_y() - 1;
+    int current_x = trace_path.top()->get_x();
+    NodeFull* current = grid.at(current_y).at(current_x);
+    if(current_y >= 0 && current->get_cost() + 1 == trace_path.top()->get_cost()){
+        if(current->get_status() == kSource){
+            trace_path.push(current);
+            return true;
+        } else{
+            trace_path.push(current);
+            current->set_status(kPath);
+            backtrack_north();
+        }
+    }
+    return false;
+}
+
+bool Utilities::GridFull::backtrack_east(){
+    int current_y = trace_path.top()->get_y();
+    int current_x = trace_path.top()->get_x() - 1;
+    NodeFull* current = grid.at(current_y).at(current_x);
+    if(current_x >= 0 && current->get_cost() + 1 == trace_path.top()->get_cost()){
+        if(current->get_status() == kSource){
+            trace_path.push(current);
+            return true;
+        } else{
+            trace_path.push(current);
+            current->set_status(kPath);
+            backtrack_east();
+        }
+    }
+    return false;
+}
+
+bool Utilities::GridFull::backtrack_south(){
+    int current_y = trace_path.top()->get_y() + 1;
+    int current_x = trace_path.top()->get_x();
+    NodeFull* current = grid.at(current_y).at(current_x);
+    if(current_y < get_height() && current->get_cost() + 1 == trace_path.top()->get_cost()){
+        if(current->get_status() == kSource){
+            trace_path.push(current);
+            return true;
+        } else{
+            trace_path.push(current);
+            current->set_status(kPath);
+            backtrack_south();
+        }
+    }
+    return false;
+}
+
+bool Utilities::GridFull::backtrack_west(){
+    int current_y = trace_path.top()->get_y();
+    int current_x = trace_path.top()->get_x() + 1;
+    NodeFull* current = grid.at(current_y).at(current_x);
+    if(current_x < get_width() && current->get_cost() + 1 == trace_path.top()->get_cost()){
+        if(current->get_status() == kSource){
+            trace_path.push(current);
+            return true;
+        } else{
+            trace_path.push(current);
+            current->set_status(kPath);
+            backtrack_west();
+        }
+    }
+    return false;
+}
+
+// void Utilities::GridFull::insert_node_path(NodeFull* node, Direction direction){
+//     trace_path.push(std::pair<NodeFull*, Direction>(node, direction));
 // }
-
-void Utilities::GridFull::insert_node_path(NodeFull* node, Direction direction){
-    trace_path.insert(trace_path.begin(), std::pair<NodeFull*, Direction>(node, direction));
-}
 
 bool Utilities::GridFull::search_north(NodeFull* border_node){
     int north_y = border_node->get_y() + 1;
     int north_x = border_node->get_x();
     int cost = border_node->get_cost() + 1;
-    if(north_y< get_height()){
+    if(north_y < get_height()){
         // node is in grid range
         if(increment_path(grid.at(north_y).at(north_x),cost)){
-            insert_node_path(border_node, kNorth);
+            // insert_node_path(border_node, kNorth);
             return true;
         }
     }
@@ -255,7 +407,7 @@ bool Utilities::GridFull::search_west(NodeFull* border_node){
     if(west_x >= 0){
         // Western node is within grid limits
         if(increment_path(grid.at(west_y).at(west_x),cost)){
-            insert_node_path(border_node, kWest);
+            // insert_node_path(border_node, kWest);
             return true;
         }
     }
@@ -269,7 +421,7 @@ bool Utilities::GridFull::search_south(NodeFull* border_node){
     if(south_y >= 0){
         // Southern node is within grid limits
         if(increment_path(grid.at(south_y).at(south_x),cost)){
-           insert_node_path(border_node, kSouth);
+        //   insert_node_path(border_node, kSouth);
             return true;
         }
     }
@@ -283,7 +435,7 @@ bool Utilities::GridFull::search_east(NodeFull* border_node){
     if(east_x < get_width()){
         // Eastern node is within grid limits
         if(increment_path(grid.at(east_y).at(east_x),cost)){
-            insert_node_path(border_node, kEast);
+            // insert_node_path(border_node, kEast);
             return true;
         };
     }
@@ -292,7 +444,8 @@ bool Utilities::GridFull::search_east(NodeFull* border_node){
 
 bool Utilities::GridFull::increment_path(NodeFull* new_border_node, int cost){
     if(new_border_node->get_status() == kSink){
-        trace_path.push_back(std::pair<NodeFull*, Direction>(new_border_node, kDirectionSink));
+        new_border_node->set_cost(cost);
+        trace_path.push(new_border_node);
         return true;
     }
     if(new_border_node->get_status() >= kFree){

@@ -22,10 +22,9 @@ int main(int argc,char* argv[]) {
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
 	Utilities::GridFull g(first_problem);
-	g.print_grid();
-	g.run_lee(1);
-	g.print_grid();
-
+	g.run_lee();
+	g.print_path();
+	// Utilities::Grid g(first_problem);
 	/*
 	Note: we do not take into account the connections or blockers that exist in the Project Object
 	You should be accouting for these in your problem map objects (you should not be using Grid). You
@@ -42,7 +41,7 @@ int main(int argc,char* argv[]) {
 	*/
 	// vector<Path*> paths = g.test_algorithm();
 
-	//Print the paths/netlists that you return from your algorithm
+	// Print the paths/netlists that you return from your algorithm
 	// for(unsigned i = 0; i < paths.size(); i++) {
 	// 	cout << "Path " << i << ": ";
 	// 	paths.at(i)->print();
