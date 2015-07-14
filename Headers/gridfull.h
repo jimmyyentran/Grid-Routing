@@ -11,6 +11,7 @@
 
 namespace Utilities {
     class GridFull{
+        
         private:
             vector<vector<NodeFull*> > grid;   
             std::queue<std::pair<NodeFull*, NodeFull*> > connections;
@@ -19,6 +20,8 @@ namespace Utilities {
             vector<Path*> paths;
             
         public:
+            enum Type{kNormal, k3bit, k2bit};
+        
             // Constructor
             GridFull(ProblemObject* problem_object);
             
@@ -31,22 +34,29 @@ namespace Utilities {
             void include_blockers(ProblemObject* problem_object);
             
             // algorithm
-            vector<Path*> run_lee();
-            void run_lee_step();
+            vector<Path*> run_lee(Type type = kNormal);
+            void run_lee_step(Type type = kNormal);
+            void run_lee_step_3bit();
             NodeFull* load_connection();
-            bool increment_path(NodeFull*, int);
+            bool increment_path(NodeFull*, int, Type type = kNormal);
+            bool increment_path_3bit(NodeFull*, int);
             void convert_to_path();
             void backtrack();
             void clean_up_grid();
             
+            bool backtrack_helper(NodeFull*);
             bool backtrack_north();
             bool backtrack_south();
             bool backtrack_west();
             bool backtrack_east();
-            bool search_north(NodeFull*);
-            bool search_west(NodeFull*);
-            bool search_south(NodeFull*);
-            bool search_east(NodeFull*);
+            bool search_north(NodeFull*, Type type = kNormal);
+            bool search_west(NodeFull*, Type type = kNormal);
+            bool search_south(NodeFull*, Type type = kNormal);
+            bool search_east(NodeFull*, Type type = kNormal);
+            bool search_north_3bit(NodeFull*);
+            bool search_west_3bit(NodeFull*);
+            bool search_south_3bit(NodeFull*);
+            bool search_east_3bit(NodeFull*);
             
             // testers
             void print_grid();

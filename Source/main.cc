@@ -22,8 +22,8 @@ int main(int argc,char* argv[]) {
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
 	Utilities::GridFull g(first_problem);
-	g.run_lee();
-	g.print_path();
+	g.run_lee(Utilities::GridFull::kNormal);
+	// g.print_path();
 	// Utilities::Grid g(first_problem);
 	/*
 	Note: we do not take into account the connections or blockers that exist in the Project Object
