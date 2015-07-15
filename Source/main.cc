@@ -22,7 +22,7 @@ int main(int argc,char* argv[]) {
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
 	Utilities::GridFull g(first_problem);
-	g.run_lee(Utilities::GridFull::kNormal);
+	g.run_lee(Utilities::GridFull::k3bit);
 	// g.print_path();
 	// Utilities::Grid g(first_problem);
 	/*

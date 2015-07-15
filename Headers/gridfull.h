@@ -36,27 +36,23 @@ namespace Utilities {
             // algorithm
             vector<Path*> run_lee(Type type = kNormal);
             void run_lee_step(Type type = kNormal);
-            void run_lee_step_3bit();
             NodeFull* load_connection();
-            bool increment_path(NodeFull*, int, Type type = kNormal);
-            bool increment_path_3bit(NodeFull*, int);
             void convert_to_path();
-            void backtrack();
+            void backtrack(Type);
             void clean_up_grid();
-            
-            bool backtrack_helper(NodeFull*);
-            bool backtrack_north();
-            bool backtrack_south();
-            bool backtrack_west();
-            bool backtrack_east();
+            //search functions
+            bool increment_path(NodeFull*, int, Type type = kNormal);
             bool search_north(NodeFull*, Type type = kNormal);
             bool search_west(NodeFull*, Type type = kNormal);
             bool search_south(NodeFull*, Type type = kNormal);
             bool search_east(NodeFull*, Type type = kNormal);
-            bool search_north_3bit(NodeFull*);
-            bool search_west_3bit(NodeFull*);
-            bool search_south_3bit(NodeFull*);
-            bool search_east_3bit(NodeFull*);
+            //path functions
+            bool backtrack_checker(NodeFull*, Type);
+            bool backtrack_add_path(NodeFull*);
+            bool backtrack_north(Type);
+            bool backtrack_south(Type);
+            bool backtrack_west(Type);
+            bool backtrack_east(Type);
             
             // testers
             void print_grid();

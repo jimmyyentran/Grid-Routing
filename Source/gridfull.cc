@@ -243,6 +243,8 @@ void Utilities::GridFull::run_lee_step(Type type){
     claim("Reset source's status", kNote);
     source_node->set_status(kSource);
     
+    // print_grid();
+    
     // Re-Trace path
     if(!path_found){
         claim("No path found", kWarning);
@@ -254,7 +256,11 @@ void Utilities::GridFull::run_lee_step(Type type){
         connections.front().second->set_status(kFree);
     } else{
         claim("Begin tracing", kNote);
-        backtrack();
+        
+        // claim("Stop here", kError);
+        
+        backtrack(type);
+        
         //TEST
         print_grid();
         
@@ -325,86 +331,110 @@ void Utilities::GridFull::print_path(){
     }
 }
 
-void Utilities::GridFull::backtrack(){
+void Utilities::GridFull::backtrack(Type type){
     while(trace_path.top()->get_status() != kSource){
-        if(backtrack_north() || backtrack_east() || backtrack_south() || backtrack_west()){
+        if(backtrack_north(type) || backtrack_east(type) || backtrack_south(type) || backtrack_west(type)){
             return;
         }
     }
 }
 
+bool Utilities::GridFull::backtrack_checker(NodeFull* node, Type type){
+    int cost = node->get_cost();
+    if(type == kNormal){
+        if(cost + 1 == trace_path.top()->get_cost()){
+            return true;
+        }
+    } else if(type == k3bit){
+        if(node->get_status() == kSource){
+            return true;
+        }else if(cost != 0 && cost % 3 + 1 == trace_path.top()->get_cost() && node->get_status() > kBlock){
+            return true;
+        }
+    } else if(type == k2bit){
+        //2bit
+    }
+    
+    return false;
+}
 
-bool Utilities::GridFull::backtrack_north(){
+bool Utilities::GridFull::backtrack_add_path(NodeFull* node){
+    // testCode();
+    if(node->get_status() == kSource){
+        trace_path.push(node);
+        // print_grid();
+        return true;
+    } else{
+        trace_path.push(node);
+        node->set_status(kPath);
+        // print_grid();
+    }
+    return false;
+}
+
+bool Utilities::GridFull::backtrack_north(Type type){
     int current_y = trace_path.top()->get_y() - 1;
     int current_x = trace_path.top()->get_x();
-    if(current_y >= 0 && grid.at(current_y).at(current_x)->get_cost() + 1 == trace_path.top()->get_cost()){
+    if(current_y >= 0){
         NodeFull* current = grid.at(current_y).at(current_x);
-        if(current->get_status() == kSource){
-            trace_path.push(current);
-            return true;
-        } else{
-            trace_path.push(current);
-            current->set_status(kPath);
-            backtrack_north();
+        if(backtrack_checker(current, type)){
+            if(backtrack_add_path(current)){
+                return true;
+            } else{
+                backtrack_north(type);
+            }
         }
     }
     return false;
 }
 
-bool Utilities::GridFull::backtrack_east(){
+bool Utilities::GridFull::backtrack_east(Type type){
     int current_y = trace_path.top()->get_y();
     int current_x = trace_path.top()->get_x() - 1;
-    if(current_x >= 0 && grid.at(current_y).at(current_x)->get_cost() + 1 == trace_path.top()->get_cost()){
+    if(current_x >= 0){
         NodeFull* current = grid.at(current_y).at(current_x);
-        if(current->get_status() == kSource){
-            trace_path.push(current);
-            return true;
-        } else{
-            trace_path.push(current);
-            current->set_status(kPath);
-            backtrack_east();
+        if(backtrack_checker(current, type)){
+            if(backtrack_add_path(current)){
+                return true;
+            } else{
+                backtrack_east(type);
+            }
         }
     }
     return false;
 }
 
-bool Utilities::GridFull::backtrack_south(){
+bool Utilities::GridFull::backtrack_south(Type type){
     int current_y = trace_path.top()->get_y() + 1;
     int current_x = trace_path.top()->get_x();
-    if(current_y < get_height() && grid.at(current_y).at(current_x)->get_cost() + 1 == trace_path.top()->get_cost()){
+    if(current_y < get_height()){
         NodeFull* current = grid.at(current_y).at(current_x);
-        if(current->get_status() == kSource){
-            trace_path.push(current);
-            return true;
-        } else{
-            trace_path.push(current);
-            current->set_status(kPath);
-            backtrack_south();
+        if(backtrack_checker(current, type)){
+            if(backtrack_add_path(current)){
+                return true;
+            } else{
+                backtrack_south(type);
+            }
         }
     }
     return false;
 }
 
-bool Utilities::GridFull::backtrack_west(){
+bool Utilities::GridFull::backtrack_west(Type type){
     int current_y = trace_path.top()->get_y();
     int current_x = trace_path.top()->get_x() + 1;
-    if(current_x < get_width() && grid.at(current_y).at(current_x)->get_cost() + 1 == trace_path.top()->get_cost()){
+    if(current_x < get_width()){
         NodeFull* current = grid.at(current_y).at(current_x);
-        if(current->get_status() == kSource){
-            trace_path.push(current);
-            return true;
-        } else{
-            trace_path.push(current);
-            current->set_status(kPath);
-            backtrack_west();
+        if(backtrack_checker(current, type)){
+            if(backtrack_add_path(current)){
+                return true;
+            } else{
+                backtrack_west(type);
+            }
         }
     }
     return false;
 }
-
-// void Utilities::GridFull::insert_node_path(NodeFull* node, Direction direction){
-//     trace_path.push(std::pair<NodeFull*, Direction>(node, direction));
-// }
 
 bool Utilities::GridFull::search_north(NodeFull* border_node, Type type){
     int north_y = border_node->get_y() + 1;
@@ -413,10 +443,6 @@ bool Utilities::GridFull::search_north(NodeFull* border_node, Type type){
     if(north_y < get_height()){
         // node is in grid range
         return increment_path(grid.at(north_y).at(north_x), cost, type);
-        // if(increment_path(grid.at(north_y).at(north_x),cost)){
-        //     // insert_node_path(border_node, kNorth);
-        //     return true;
-        // }
     }
     return false;
 }
@@ -428,10 +454,6 @@ bool Utilities::GridFull::search_west(NodeFull* border_node, Type type){
     if(west_x >= 0){
         // Western node is within grid limits
         return increment_path(grid.at(west_y).at(west_x), cost, type);
-        // if(increment_path(grid.at(west_y).at(west_x),cost)){
-        //     // insert_node_path(border_node, kWest);
-        //     return true;
-        // }
     }
     return false;
 }
@@ -443,10 +465,6 @@ bool Utilities::GridFull::search_south(NodeFull* border_node, Type type){
     if(south_y >= 0){
         // Southern node is within grid 
         return increment_path(grid.at(south_y).at(south_x), cost, type);
-        // if(increment_path(grid.at(south_y).at(south_x),cost)){
-        // //   insert_node_path(border_node, kSouth);
-        //     return true;
-        // }
     }
     return false;
 }
@@ -458,22 +476,18 @@ bool Utilities::GridFull::search_east(NodeFull* border_node, Type type){
     if(east_x < get_width()){
         // Eastern node is within grid limits
         return increment_path(grid.at(east_y).at(east_x), cost, type);
-        // if(type == kNormal){
-        //     return increment_path(grid.at(east_y).at(east_x), cost, type);
-        // } else if(type == k3bit){
-        //     return increment_path(grid.at(east_y).at(east_x), cost, type);
-        // }
-        // if(increment_path(grid.at(east_y).at(east_x),cost)){
-        //     // insert_node_path(border_node, kEast);
-        //     return true;
-        // }
     }
     return false;
 }
 
 bool Utilities::GridFull::increment_path(NodeFull* new_border_node, int cost, Type type){
     if(type == k3bit){
-        cost = (cost % 3) + 1;
+        if(cost > 3){
+            cost = 1;
+        }
+    }
+    if(type == k2bit){
+        // if()
     }
     if(new_border_node->get_status() == kSink){
         new_border_node->set_cost(cost);
@@ -487,130 +501,6 @@ bool Utilities::GridFull::increment_path(NodeFull* new_border_node, int cost, Ty
     }
     return false;
 }
-
-// bool Utilities::GridFull::increment_path_3bit(NodeFull* new_border_node, int cost){
-//     int cost_3bit = (cost % 3) + 1;
-//     if(new_border_node->get_status() == kSink){
-//         new_border_node->set_cost(cost_3bit);
-//         trace_path.push(new_border_node);
-//         return true;
-//     }
-//     if(new_border_node->get_status() >= kFree){
-//         new_border_node->set_status(kBorder);
-//         new_border_node->set_cost(cost_3bit);
-//         border.push(new_border_node);
-//     }
-//     return false;
-// }
-
-// bool Utilities::GridFull::search_north_3bit(NodeFull* border_node){
-//     int north_y = border_node->get_y() + 1;
-//     int north_x = border_node->get_x();
-//     int cost = border_node->get_cost() + 1;
-//     if(north_y < get_height()){
-//         // node is in grid range
-//         if(increment_path_3bit(grid.at(north_y).at(north_x),cost)){
-//             // insert_node_path(border_node, kNorth);
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
-// bool Utilities::GridFull::search_west_3bit(NodeFull* border_node){
-//     int west_y = border_node->get_y();
-//     int west_x = border_node->get_x() - 1;
-//     int cost = border_node->get_cost() + 1;
-//     if(west_x >= 0){
-//         // Western node is within grid limits
-//         if(increment_path_3bit(grid.at(west_y).at(west_x),cost)){
-//             // insert_node_path(border_node, kWest);
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
-// bool Utilities::GridFull::search_south_3bit(NodeFull* border_node){
-//     int south_y = border_node->get_y() - 1;
-//     int south_x = border_node->get_x();
-//     int cost = border_node->get_cost() + 1;
-//     if(south_y >= 0){
-//         // Southern node is within grid limits
-//         if(increment_path_3bit(grid.at(south_y).at(south_x),cost)){
-//         //   insert_node_path(border_node, kSouth);
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
-// bool Utilities::GridFull::search_east_3bit(NodeFull* border_node){
-//     int east_y = border_node->get_y();
-//     int east_x = border_node->get_x() + 1;
-//     int cost = border_node->get_cost() + 1;
-//     if(east_x < get_width()){
-//         // Eastern node is within grid limits
-//         if(increment_path_3bit(grid.at(east_y).at(east_x),cost)){
-//             // insert_node_path(border_node, kEast);
-//             return true;
-//         };
-//     }
-//     return false;
-// }
-
-// void Utilities::GridFull::run_lee_step_3bit(){
-//     // input the first node (source) into queue
-//     NodeFull* source_node = load_connection();
-//     if(source_node == 0){
-//         return;
-//     }
-//     border.push(source_node);
-    
-//     bool path_found = false;
-//     while(!border.empty()){
-//         NodeFull* front = border.front();
-//         // start searching
-//         if(search_north_3bit(front) || search_east_3bit(front) || search_south_3bit(front)
-//             || search_west_3bit(front)){
-//                 path_found = true;
-//                 break;    
-//         }
-//         border.front()->set_status(kVisited);
-//         border.pop();
-//     }
-    
-//     // reset source to the source node
-//     source_node->set_status(kSource);
-    
-//     print_grid();
-//     // // Re-Trace path
-//     // if(!path_found){
-//     //     claim("No path found", kWarning);
-//     // } else{
-//     //     backtrack();
-    
-//     //     //TEST
-//     //     print_grid();
-        
-//     //     // convert source and sink into paths
-//     //     source_node->set_status(kPath);
-//     //     connections.front().second->set_status(kPath);
-        
-//     //     // make stack into vector of paths
-//     //     convert_to_path();
-//     // }
-    
-//     // // all border and visited nodes cleared status and sinks
-//     // clean_up_grid();
-    
-//     // while(!border.empty()){
-//     //     border.pop();
-//     // }
-    
-//     // // pop the finished connection
-//     // connections.pop();
-// }
 
 // void Utilities::GridFull::percolate(Node* source){
     
