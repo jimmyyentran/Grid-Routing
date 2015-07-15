@@ -20,6 +20,7 @@ Finally I settled on vectors due to O(1) search time. I implemented a grid class
 construction as the provided Grid class. I also derived a child class from the Node class (NodeFull) that
 most importantly contain a 'status' data member that holds the node's type. I figure that I can find adjacent
 nodes by using the x and y coordinate so I did not utilize edges(yet) in the grid construction.
-    
-TODO:
-queue source can access blocks
+
+7-15-2015
+2bit Lee's algorithm uses a queue that is sectioned off by a null-node. This is different than the previous
+Lee's algorithm.

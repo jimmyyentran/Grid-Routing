@@ -38,15 +38,16 @@ namespace Utilities {
             void run_lee_step(Type type = kNormal);
             NodeFull* load_connection();
             void convert_to_path();
-            void backtrack(Type);
             void clean_up_grid();
             //search functions
+            bool search(Type);
             bool increment_path(NodeFull*, int, Type type = kNormal);
             bool search_north(NodeFull*, Type type = kNormal);
             bool search_west(NodeFull*, Type type = kNormal);
             bool search_south(NodeFull*, Type type = kNormal);
             bool search_east(NodeFull*, Type type = kNormal);
             //path functions
+            void backtrack(Type);
             bool backtrack_checker(NodeFull*, Type);
             bool backtrack_add_path(NodeFull*);
             bool backtrack_north(Type);

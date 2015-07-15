@@ -215,6 +215,41 @@ vector<Utilities::Path*> Utilities::GridFull::run_lee(Type type){
     return paths;
 }
 
+bool Utilities::GridFull::search(Type type){
+    if(type == k2bit){
+        while(!border.empty()){
+            NodeFull* front = border.front();
+            if(front != 0){
+                //WORK IN PROGRESS
+                // start searching
+                if(search_north(front, type) || search_east(front, type) || search_south(front, type)
+                    || search_west(front, type)){
+                        return true;
+                        claim("Found Path!", kNote);
+                        break;    
+                }
+                border.front()->set_status(kVisited);
+                border.pop();
+            }
+        }
+        return false;
+    }else{
+        while(!border.empty()){
+            NodeFull* front = border.front();
+            // start searching
+            if(search_north(front, type) || search_east(front, type) || search_south(front, type)
+                || search_west(front, type)){
+                    return true;
+                    claim("Found Path!", kNote);
+                    break;    
+            }
+            border.front()->set_status(kVisited);
+            border.pop();
+        }
+        return false;
+    }
+}
+
 void Utilities::GridFull::run_lee_step(Type type){
     // input the first node (source) into queue
     claim("Load connection", kNote);
@@ -223,21 +258,14 @@ void Utilities::GridFull::run_lee_step(Type type){
         return;
     }
     border.push(source_node);
-    bool path_found = false;
+    
+    // k2bit uses a different type of queue that sections off null-nodes hence push(0)
+    if(type == k2bit){
+        border.push(0);
+    }
     
     claim("Begin Search", kNote);
-    while(!border.empty()){
-        NodeFull* front = border.front();
-        // start searching
-        if(search_north(front, type) || search_east(front, type) || search_south(front, type)
-            || search_west(front, type)){
-                path_found = true;
-                claim("Found Path!", kNote);
-                break;    
-        }
-        border.front()->set_status(kVisited);
-        border.pop();
-    }
+    bool path_found = search(type);
     
     // reset source to the source node
     claim("Reset source's status", kNote);
