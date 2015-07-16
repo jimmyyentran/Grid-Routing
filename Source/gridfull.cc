@@ -217,13 +217,34 @@ vector<Utilities::Path*> Utilities::GridFull::run_lee(Type type){
 
 bool Utilities::GridFull::search(Type type){
     if(type == k2bit){
+        int custom_cost = 1;
+        int cost_counter = 0;
         while(!border.empty()){
             NodeFull* front = border.front();
-            if(front != 0){
-                //WORK IN PROGRESS
+            if(front == 0){
+                border.pop();
+                if(border.size() == 0){
+                    continue;
+                }
+                border.push(0); // put null-node at end of new section
+                cost_counter++;
+                if(cost_counter >= 2){
+                    if(custom_cost == 1){
+                        custom_cost = 2;
+                    }else{
+                        custom_cost = 1;
+                    }
+                    cost_counter = 0;
+                }
+                testCode();
+                print_grid();
+                std::cout << "custom_cost: " << custom_cost << endl;
+                std::cout << "cost_counter: " << cost_counter << endl;
+                // continue;
+            } else{
                 // start searching
-                if(search_north(front, type) || search_east(front, type) || search_south(front, type)
-                    || search_west(front, type)){
+                if(search_north(front, type, custom_cost) || search_east(front, type, custom_cost) 
+                || search_south(front, type, custom_cost) || search_west(front, type, custom_cost)){
                         return true;
                         claim("Found Path!", kNote);
                         break;    
@@ -232,7 +253,6 @@ bool Utilities::GridFull::search(Type type){
                 border.pop();
             }
         }
-        return false;
     }else{
         while(!border.empty()){
             NodeFull* front = border.front();
@@ -246,8 +266,8 @@ bool Utilities::GridFull::search(Type type){
             border.front()->set_status(kVisited);
             border.pop();
         }
-        return false;
     }
+    return false;
 }
 
 void Utilities::GridFull::run_lee_step(Type type){
@@ -259,7 +279,8 @@ void Utilities::GridFull::run_lee_step(Type type){
     }
     border.push(source_node);
     
-    // k2bit uses a different type of queue that sections off null-nodes hence push(0)
+    // k2bit uses a different type of queue that sections off nodes using null-nodes 
+    // hence push(0) which signals for a break
     if(type == k2bit){
         border.push(0);
     }
@@ -464,46 +485,54 @@ bool Utilities::GridFull::backtrack_west(Type type){
     return false;
 }
 
-bool Utilities::GridFull::search_north(NodeFull* border_node, Type type){
+bool Utilities::GridFull::search_north(NodeFull* border_node, Type type, int custom_cost){
     int north_y = border_node->get_y() + 1;
     int north_x = border_node->get_x();
     int cost = border_node->get_cost() + 1;
     if(north_y < get_height()){
         // node is in grid range
-        return increment_path(grid.at(north_y).at(north_x), cost, type);
+        if(type == k2bit){
+            return increment_path(grid.at(north_y).at(north_x), custom_cost, type);
+        } else return increment_path(grid.at(north_y).at(north_x), cost, type);
     }
     return false;
 }
 
-bool Utilities::GridFull::search_west(NodeFull* border_node, Type type){
+bool Utilities::GridFull::search_west(NodeFull* border_node, Type type, int custom_cost){
     int west_y = border_node->get_y();
     int west_x = border_node->get_x() - 1;
     int cost = border_node->get_cost() + 1;
     if(west_x >= 0){
         // Western node is within grid limits
-        return increment_path(grid.at(west_y).at(west_x), cost, type);
+        if(type == k2bit){
+            return increment_path(grid.at(west_y).at(west_x), custom_cost, type);
+        } else return increment_path(grid.at(west_y).at(west_x), cost, type);
     }
     return false;
 }
 
-bool Utilities::GridFull::search_south(NodeFull* border_node, Type type){
+bool Utilities::GridFull::search_south(NodeFull* border_node, Type type, int custom_cost){
     int south_y = border_node->get_y() - 1;
     int south_x = border_node->get_x();
     int cost = border_node->get_cost() + 1;
     if(south_y >= 0){
         // Southern node is within grid 
-        return increment_path(grid.at(south_y).at(south_x), cost, type);
+        if(type == k2bit){
+            return increment_path(grid.at(south_y).at(south_x), custom_cost, type);
+        } else return increment_path(grid.at(south_y).at(south_x), cost, type);
     }
     return false;
 }
 
-bool Utilities::GridFull::search_east(NodeFull* border_node, Type type){
+bool Utilities::GridFull::search_east(NodeFull* border_node, Type type, int custom_cost){
     int east_y = border_node->get_y();
     int east_x = border_node->get_x() + 1;
     int cost = border_node->get_cost() + 1;
     if(east_x < get_width()){
         // Eastern node is within grid limits
-        return increment_path(grid.at(east_y).at(east_x), cost, type);
+        if(type == k2bit){
+            return increment_path(grid.at(east_y).at(east_x), custom_cost, type);
+        } else return increment_path(grid.at(east_y).at(east_x), cost, type);
     }
     return false;
 }
@@ -513,9 +542,6 @@ bool Utilities::GridFull::increment_path(NodeFull* new_border_node, int cost, Ty
         if(cost > 3){
             cost = 1;
         }
-    }
-    if(type == k2bit){
-        // if()
     }
     if(new_border_node->get_status() == kSink){
         new_border_node->set_cost(cost);

@@ -42,10 +42,10 @@ namespace Utilities {
             //search functions
             bool search(Type);
             bool increment_path(NodeFull*, int, Type type = kNormal);
-            bool search_north(NodeFull*, Type type = kNormal);
-            bool search_west(NodeFull*, Type type = kNormal);
-            bool search_south(NodeFull*, Type type = kNormal);
-            bool search_east(NodeFull*, Type type = kNormal);
+            bool search_north(NodeFull*, Type type = kNormal, int = 0);
+            bool search_west(NodeFull*, Type type = kNormal, int  = 0);
+            bool search_south(NodeFull*, Type type = kNormal, int = 0);
+            bool search_east(NodeFull*, Type type = kNormal, int  = 0);
             //path functions
             void backtrack(Type);
             bool backtrack_checker(NodeFull*, Type);
