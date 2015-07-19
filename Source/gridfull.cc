@@ -3,6 +3,7 @@
 #include <algorithm> // find vector
 #include <iostream> // testing
 #include <time.h> // sleep for testing
+#include <cmath>
 
 /*
     NODE-TYPE CONSTANTS:
@@ -181,7 +182,7 @@ void Utilities::GridFull::print_grid(){
                     break;
                 case kBlock:
                     // the current_node is a block
-                    std::cout << '~';
+                    std::cout << '-';
                     break;
                 case kSource:
                     std::cout << '@';
@@ -205,9 +206,9 @@ void Utilities::GridFull::print_grid(){
     std::cout << endl;
 }
 
-vector<Utilities::Path*> Utilities::GridFull::run_lee(Type type){
+vector<Utilities::Path*> Utilities::GridFull::run_algorithm(Type type){
     while(!connections.empty()){
-        run_lee_step(type);
+        run_algorithm_step(type);
     }
     // Test
     print_grid();
@@ -217,6 +218,10 @@ vector<Utilities::Path*> Utilities::GridFull::run_lee(Type type){
 
 bool Utilities::GridFull::search(Type type){
     if(type == k2bit){
+        // k2bit uses a different type of queue that sections off nodes using null-nodes 
+        // hence push(0) which signals for a break  
+        border.push(0);
+        
         int custom_cost = 1;
         int cost_counter = 0;
         while(!border.empty()){
@@ -224,7 +229,7 @@ bool Utilities::GridFull::search(Type type){
             if(front == 0){
                 border.pop();
                 if(border.size() == 0){
-                    continue;
+                    break;
                 }
                 border.push(0); // put null-node at end of new section
                 cost_counter++;
@@ -236,10 +241,10 @@ bool Utilities::GridFull::search(Type type){
                     }
                     cost_counter = 0;
                 }
-                testCode();
-                print_grid();
-                std::cout << "custom_cost: " << custom_cost << endl;
-                std::cout << "cost_counter: " << cost_counter << endl;
+                // testCode();
+                // print_grid();
+                // std::cout << "custom_cost: " << custom_cost << endl;
+                // std::cout << "cost_counter: " << cost_counter << endl;
                 // continue;
             } else{
                 // start searching
@@ -252,6 +257,32 @@ bool Utilities::GridFull::search(Type type){
                 border.front()->set_status(kVisited);
                 border.pop();
             }
+        }
+    }else if(type == kHadlock){
+        int detour = 0;
+        NodeFull* front = border.front();
+        border.push(0);
+        while(!border.empty()){
+            if(front==0){
+                border.pop();
+                if(border.size() == 0){
+                    break;
+                }
+                border.push(0);
+                detour++;
+            }else{
+                // start searching
+                if(search_north(front, type, detour) || search_east(front, type, detour) 
+                || search_south(front, type, detour) || search_west(front, type, detour)){
+                        return true;
+                        claim("Found Path!", kNote);
+                        break;    
+                }
+                border.front()->set_status(kVisited);
+                border.pop();
+            }
+            std::cout<< distance(grid.at(0).at(0), grid.at(0).at(10));
+            exit(1);
         }
     }else{
         while(!border.empty()){
@@ -270,7 +301,11 @@ bool Utilities::GridFull::search(Type type){
     return false;
 }
 
-void Utilities::GridFull::run_lee_step(Type type){
+double Utilities::GridFull::distance(NodeFull* first, NodeFull* second){
+    return sqrt(pow((first->get_x() - second->get_x()), 2) + pow((first->get_y() - second->get_y()),2));
+}
+
+void Utilities::GridFull::run_algorithm_step(Type type){
     // input the first node (source) into queue
     claim("Load connection", kNote);
     NodeFull* source_node = load_connection();
@@ -279,11 +314,11 @@ void Utilities::GridFull::run_lee_step(Type type){
     }
     border.push(source_node);
     
-    // k2bit uses a different type of queue that sections off nodes using null-nodes 
-    // hence push(0) which signals for a break
-    if(type == k2bit){
-        border.push(0);
-    }
+    // // k2bit uses a different type of queue that sections off nodes using null-nodes 
+    // // hence push(0) which signals for a break
+    // if(type == k2bit || type == kHadlock){
+    //     border.push(0);
+    // }
     
     claim("Begin Search", kNote);
     bool path_found = search(type);
@@ -292,7 +327,7 @@ void Utilities::GridFull::run_lee_step(Type type){
     claim("Reset source's status", kNote);
     source_node->set_status(kSource);
     
-    // print_grid();
+    print_grid();
     
     // Re-Trace path
     if(!path_found){
@@ -306,6 +341,10 @@ void Utilities::GridFull::run_lee_step(Type type){
     } else{
         claim("Begin tracing", kNote);
         
+        if(type == k2bit){
+            claim("Need to work on k2bit", kDebug);
+            exit(1);
+        }
         // claim("Stop here", kError);
         
         backtrack(type);

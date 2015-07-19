@@ -22,8 +22,30 @@ int main(int argc,char* argv[]) {
 
 	//Create your problem map object (in our example, we use a simple grid, you should create your own)
 	Utilities::GridFull g(first_problem);
-	// g.run_lee(Utilities::GridFull::kNormal);
-	g.run_lee(Utilities::GridFull::k2bit);
+	cout << "1. Lee's Algorithm\n2. Lee's Algorithm (3bit)\n3. Lee's Algorithm(2bit)\n4. Hadlock's Algorithm" <<endl;
+	cout << "Choose algorithm (1-4): ";
+	int choice;
+	std::cin >> choice;
+	switch(choice){
+		case 1: 
+			g.run_algorithm(Utilities::GridFull::kNormal);
+			break;
+		case 2:
+			g.run_algorithm(Utilities::GridFull::k3bit);
+			break;
+		case 3:
+			g.run_algorithm(Utilities::GridFull::k2bit);
+			break;
+		case 4:
+			g.run_algorithm(Utilities::GridFull::kHadlock);
+			break;
+		default:
+			break;
+	}
+		
+	// g.run_algorithm(Utilities::GridFull::kNormal);
+	// g.run_algorithm(Utilities::GridFull::k3bit);
+	// g.run_algorithm(Utilities::GridFull::k2bit);
 
 	// g.print_path();
 	// Utilities::Grid g(first_problem);

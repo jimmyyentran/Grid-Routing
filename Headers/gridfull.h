@@ -20,7 +20,7 @@ namespace Utilities {
             vector<Path*> paths;
             
         public:
-            enum Type{kNormal, k3bit, k2bit};
+            enum Type{kNormal, k3bit, k2bit, kHadlock};
         
             // Constructor
             GridFull(ProblemObject* problem_object);
@@ -34,8 +34,8 @@ namespace Utilities {
             void include_blockers(ProblemObject* problem_object);
             
             // algorithm
-            vector<Path*> run_lee(Type type = kNormal);
-            void run_lee_step(Type type = kNormal);
+            vector<Path*> run_algorithm(Type type = kNormal);
+            void run_algorithm_step(Type type = kNormal);
             NodeFull* load_connection();
             void convert_to_path();
             void clean_up_grid();
@@ -54,6 +54,9 @@ namespace Utilities {
             bool backtrack_south(Type);
             bool backtrack_west(Type);
             bool backtrack_east(Type);
+            
+            // Hadlock
+            double distance(NodeFull*, NodeFull*);
             
             // testers
             void print_grid();

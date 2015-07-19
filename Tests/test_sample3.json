@@ -16,6 +16,7 @@
 	{"name": "route2", "source_x": 20, "source_y": 1, "sink_x": 23, "sink_y": 35},
 	{"name": "route3", "source_x": 79, "source_y": 39, "sink_x": 15, "sink_y": 25},
 	{"name": "route4", "source_x": 14, "source_y": 19, "sink_x": 30, "sink_y": 19},
-	{"name": "route5", "source_x": 20, "source_y": 13, "sink_x": 4, "sink_y": 41}
+	{"name": "route5", "source_x": 0, "source_y": 49, "sink_x": 79, "sink_y": 49},
+	{"name": "route6", "source_x": 20, "source_y": 13, "sink_x": 4, "sink_y": 41}
 	]
 }
