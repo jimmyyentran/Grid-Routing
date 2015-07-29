@@ -43,11 +43,7 @@ int main(int argc,char* argv[]) {
 			break;
 	}
 		
-	// g.run_algorithm(Utilities::GridFull::kNormal);
-	// g.run_algorithm(Utilities::GridFull::k3bit);
-	// g.run_algorithm(Utilities::GridFull::k2bit);
-
-	// g.print_path();
+	g.print_path();
 	// Utilities::Grid g(first_problem);
 	/*
 	Note: we do not take into account the connections or blockers that exist in the Project Object

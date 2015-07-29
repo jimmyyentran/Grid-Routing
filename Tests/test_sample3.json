@@ -1,7 +1,7 @@
 {
 	"file_name": "test_sample",
 
-	"height": 50,
+	"height": 45,
 	"width": 80,
 
 	"blockerList": [
@@ -16,7 +16,7 @@
 	{"name": "route2", "source_x": 20, "source_y": 1, "sink_x": 23, "sink_y": 35},
 	{"name": "route3", "source_x": 79, "source_y": 39, "sink_x": 15, "sink_y": 25},
 	{"name": "route4", "source_x": 14, "source_y": 19, "sink_x": 30, "sink_y": 19},
-	{"name": "route5", "source_x": 0, "source_y": 49, "sink_x": 79, "sink_y": 49},
+	{"name": "route5", "source_x": 0, "source_y": 44, "sink_x": 79, "sink_y": 44},
 	{"name": "route5", "source_x": 75, "source_y": 5, "sink_x": 75, "sink_y": 25},
 	{"name": "route5", "source_x": 75, "source_y": 28, "sink_x": 75, "sink_y": 27},
 	{"name": "route5", "source_x": 75, "source_y": 30, "sink_x": 74, "sink_y": 30},

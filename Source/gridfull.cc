@@ -338,10 +338,9 @@ void Utilities::GridFull::run_algorithm_step(Type type){
     } else{
         claim("Begin tracing", kNote);
         
-        if(type == k2bit){
-            claim("Need to work on tracing", kDebug);
-            exit(1);
-        }
+        // if(type == k2bit){
+        //     claim("Need to work on tracing", kDebug);
+        // }
         
         backtrack(type);
         
@@ -514,7 +513,18 @@ bool Utilities::GridFull::backtrack_checker(NodeFull* node, Type type){
             return true;
         }
     } else if(type == k2bit){
-        //2bit
+        claim("Needs fixing", kError);
+        if(top_cost == 1){
+            if(cost == 2){
+                return true;
+            }
+        }else if(top_cost == 2){
+            if(cost == 1){
+                return true;
+            }
+        }else{
+            claim("Unusual cost", kWarning);
+        }
     } else if(type == kHadlock){
         if(status == kSource){
             return true;
@@ -543,10 +553,23 @@ bool Utilities::GridFull::backtrack_add_path(NodeFull* node){
 
 bool Utilities::GridFull::backtrack_north(Type type){
     int current_y = trace_path.top()->get_y() - 1;
+    // if(type == k2bit){
+    //     current_y -= 1;
+    // }
     int current_x = trace_path.top()->get_x();
     if(current_y >= 0){
         NodeFull* current = grid.at(current_y).at(current_x);
-        if(backtrack_checker(current, type)){
+        if(type == k2bit){
+            if(backtrack_checker(grid.at(current_y - 1).at(current_x), type)){
+                if(backtrack_add_path(current)){
+                    return true;
+                }else if(backtrack_add_path(grid.at(current_y - 1).at(current_x))){
+                    return true;
+                }else{
+                    backtrack_north(type);
+                }
+            }
+        }else if(backtrack_checker(current, type)){
             if(backtrack_add_path(current)){
                 return true;
             } else{
@@ -560,12 +583,25 @@ bool Utilities::GridFull::backtrack_north(Type type){
 bool Utilities::GridFull::backtrack_east(Type type){
     int current_y = trace_path.top()->get_y();
     int current_x = trace_path.top()->get_x() - 1;
+    // if(type == k2bit){
+    //     current_x -= 1;
+    // }
     if(current_x >= 0){
         NodeFull* current = grid.at(current_y).at(current_x);
-        if(backtrack_checker(current, type)){
+        if(type == k2bit){
+            if(backtrack_checker(grid.at(current_y).at(current_x - 1), type)){
+                if(backtrack_add_path(current)){
+                    return true;
+                }else if(backtrack_add_path(grid.at(current_y).at(current_x - 1))){
+                    return true;
+                }else{
+                    backtrack_east(type);
+                }
+            }
+        }else if(backtrack_checker(current, type)){
             if(backtrack_add_path(current)){
                 return true;
-            } else{
+            }else{
                 backtrack_east(type);
             }
         }
@@ -575,13 +611,26 @@ bool Utilities::GridFull::backtrack_east(Type type){
 
 bool Utilities::GridFull::backtrack_south(Type type){
     int current_y = trace_path.top()->get_y() + 1;
+    // if(type == k2bit){
+    //     current_y += 1;
+    // }
     int current_x = trace_path.top()->get_x();
     if(current_y < get_height()){
         NodeFull* current = grid.at(current_y).at(current_x);
-        if(backtrack_checker(current, type)){
+        if(type == k2bit){
+            if(backtrack_checker(grid.at(current_y + 1).at(current_x), type)){
+                if(backtrack_add_path(current)){
+                    return true;
+                }else if(backtrack_add_path(grid.at(current_y + 1).at(current_x))){
+                    return true;
+                }else{
+                    backtrack_south(type);
+                }
+            }
+        }else if(backtrack_checker(current, type)){
             if(backtrack_add_path(current)){
                 return true;
-            } else{
+            }else{
                 backtrack_south(type);
             }
         }
@@ -592,9 +641,22 @@ bool Utilities::GridFull::backtrack_south(Type type){
 bool Utilities::GridFull::backtrack_west(Type type){
     int current_y = trace_path.top()->get_y();
     int current_x = trace_path.top()->get_x() + 1;
+    // if(type == k2bit){
+    //     current_x += 1;
+    // }
     if(current_x < get_width()){
         NodeFull* current = grid.at(current_y).at(current_x);
-        if(backtrack_checker(current, type)){
+        if(type == k2bit){
+            if(backtrack_checker(grid.at(current_y).at(current_x + 1), type)){
+                if(backtrack_add_path(current)){
+                    return true;
+                }else if(backtrack_add_path(grid.at(current_y).at(current_x + 1))){
+                    return true;
+                }else{
+                    backtrack_west(type);
+                }
+            }
+        }else if(backtrack_checker(current, type)){
             if(backtrack_add_path(current)){
                 return true;
             } else{
