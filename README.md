@@ -100,7 +100,7 @@ Search 2                              Trace 2
 ```
 
 ### 3 Bits Requirement
-Save memory usage by reducin the number of bits used.
+Save memory usage by reducing the number of bits used.
 ```
 Search 1                              Trace 1
 
